@@ -1,0 +1,15 @@
+services:
+  mongodb-docker:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb:/data/db
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: username
+        MONGO_INITDB_ROOT_PASSWORD: password
+
+volumes:
+  mongodb:
+    driver: local
