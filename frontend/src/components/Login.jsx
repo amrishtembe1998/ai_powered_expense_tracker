@@ -27,6 +27,7 @@ export default function Login() {
           localStorage.setItem('token', response.data.jwt);
           navigate('/home');
         } catch (error) {
+          setIsLoading(false);
           setError(error?.response?.data?.message || 'Something went wrong. Please try again.');
         }
       } else {
@@ -42,6 +43,7 @@ export default function Login() {
           localStorage.setItem('token', response.data.jwt);
           navigate('/home');
         } catch (error) {
+          setIsLoading(false);
           setError(error?.response?.data?.message || 'Something went wrong. Please try again.');
         }
       }
