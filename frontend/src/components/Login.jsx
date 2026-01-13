@@ -54,7 +54,7 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="border shadow-xl my-4 py-4 px-4">
+      <div className="border shadow-xl my-4 py-4 px-4 bg-white text-black">
         <h1 className="flex justify-center pb-4 text-2xl">{isLogin ? 'Log In' : 'Sign Up'}</h1>
         <form onSubmit={onAuthClickHandler}>
           {!isLogin && (
@@ -62,7 +62,7 @@ export default function Login() {
               <div className="flex px-3 pb-2">
                 <div className="p-1 whitespace-nowrap">First Name:</div>
                 <input
-                  className="block w-full rounded-md bg-gray-50 p-1"
+                  className="block w-full rounded-md bg-gray-200 p-1"
                   type="text"
                   placeholder="John"
                   value={firstName}
@@ -74,7 +74,7 @@ export default function Login() {
               <div className="flex px-3 pb-2">
                 <div className="p-1 whitespace-nowrap">Last Name:</div>
                 <input
-                  className="block w-full rounded-md bg-gray-50 p-1"
+                  className="block w-full rounded-md bg-gray-200 p-1"
                   type="text"
                   placeholder="Doe"
                   value={lastName}
@@ -86,9 +86,9 @@ export default function Login() {
             </>
           )}
           <div className="flex px-3 pb-2">
-            <div className="p-1">Username:</div>
+            <div className="p-1 pr-2">Username:</div>
             <input
-              className="block w-full rounded-md bg-gray-50 p-1"
+              className="block w-full rounded-md bg-gray-200 p-1"
               type="text"
               placeholder="user@name.com"
               value={username}
@@ -99,9 +99,9 @@ export default function Login() {
             />
           </div>
           <div className="flex px-3 pb-2">
-            <div className="p-1">Password:</div>
+            <div className="p-1 pr-3">Password:</div>
             <input
-              className="block w-full rounded-md bg-gray-50 p-1"
+              className="block w-full rounded-md bg-gray-200 p-1"
               type="password"
               placeholder="password"
               value={password}

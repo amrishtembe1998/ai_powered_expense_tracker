@@ -1,35 +1,40 @@
 import React, { useState } from 'react';
+import Popup from './Popup';
 
-const ExpensesList = ({
-  expenses,
-  setEditExpense,
-  setDeleteExpense,
-  date,
-  setDate,
-  amount,
-  setAmount,
-  title,
-  setTitle,
-  description,
-  setDescription,
-  error,
-  setError,
-}) => {
-  const [isEditable, setIsEditable] = useState(false);
-  const handleEditExpense = () => {
-    setIsEditable(true);
+const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteExpenseId, error, setError }) => {
+  const today = new Date().toISOString().split('T')[0];
+  const [editingId, setEditingId] = useState(null);
+  const [editedAmount, setEditedAmount] = useState(0);
+  const [editedDate, setEditedDate] = useState(today);
+  const [editedTitle, setEditedTitle] = useState('');
+  const [editedDescription, setEditedDescription] = useState('');
+  const [isPopupOpened, setIsPopupOpened] = useState(false);
+
+  const handleEditExpense = (expense) => {
+    setError('');
+    setEditingId(expense._id);
+    setEditedDate(expense.date?.split('T')[0] ?? '');
+    setEditedAmount(expense.amount ?? '');
+    setEditedTitle(expense.title ?? '');
+    setEditedDescription(expense.description ?? '');
   };
-  const handleDeleteExpense = () => {};
+
+  const handleDeleteExpense = (expense) => {
+    setIsPopupOpened(true);
+    console.log('expense._id', expense._id);
+    setDeleteExpenseId(expense._id);
+  };
+
   return (
     <div className="flex justify-center mt-4">
-      <table className="table-fixed border-2 w-full mx-12">
+      <table className="table-fixed border-2 w-full mx-12 bg-gray-900">
         <colgroup>
           <col className="w-[5%]" /> {/* Sr No */}
           <col className="w-[10%]" /> {/* Date */}
-          <col className="w-[10%]" /> {/* Amount */}
+          <col className="w-[8%]" /> {/* Amount */}
           <col className="w-[30%]" /> {/* Title (MAX SPACE) */}
-          <col className="w-[25%]" /> {/* Description */}
-          <col className="w-[20%]" /> {/* Actions */}
+          <col className="w-[20%]" /> {/* Description */}
+          <col className="w-[37%]" /> {/* Actions */}
         </colgroup>
         <thead className="border-2">
           <tr>
@@ -42,91 +47,128 @@ const ExpensesList = ({
           </tr>
         </thead>
         <tbody>
-          {expenses.map((expense, index) => (
-            <tr key={expense._id} className={`border-2 ${Math.ceil(index % 2) === 0 ? 'bg-gray-50' : 'bg-gray-200'}`}>
-              <td className="border-2 text-center">{index + 1}</td>
-              <td className="border-2 text-center">
-                <div className="block max-w-full overflow-x-auto whitespace-nowrap">
-                  {isEditable ? (
-                    <input
-                      className="w-full"
-                      type="date"
-                      value={date}
-                      onChange={(e) => {
-                        setDate(e.target.value);
-                      }}
-                      onClick={() => setError('')}
-                    />
-                  ) : (
-                    new Date(expense.date).toLocaleDateString()
-                  )}
-                </div>
-              </td>
-              <td className="border-2 text-center">
-                <div className="block max-w-full overflow-x-auto whitespace-nowrap">
-                  {isEditable ? (
-                    <input
-                      type="number"
-                      className="border p-1 rounded-md w-full"
-                      placeholder="Amount"
-                      value={amount}
-                      onChange={(e) => {
-                        setAmount(e.target.value);
-                      }}
-                      onClick={() => setError('')}
-                    />
-                  ) : (
-                    expense.amount
-                  )}
-                </div>
-              </td>
-              <td className="border-2 px-2">
-                {isEditable ? (
-                  <div className="block max-w-full overflow-x-auto">
-                    <input
-                      type="text"
-                      className="border p-1 rounded-md w-full"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
+          {expenses.map((expense, index) => {
+            const isRowEditable = editingId === expense._id;
+            return (
+              <tr
+                key={expense._id}
+                className={`border-2 ${Math.ceil(index % 2) === 0 ? 'bg-gray-800' : 'bg-gray-600'}`}
+              >
+                <td className="border-2 text-center">{index + 1}</td>
+                <td className="border-2 text-center">
+                  <div className="block max-w-full overflow-x-auto whitespace-nowrap">
+                    {isRowEditable ? (
+                      <input
+                        className="w-full"
+                        type="date"
+                        value={editedDate}
+                        onChange={(e) => {
+                          setEditedDate(e.target.value);
+                        }}
+                        onClick={() => setError('')}
+                      />
+                    ) : (
+                      new Date(expense.date).toLocaleDateString()
+                    )}
                   </div>
-                ) : (
-                  <div className="block max-w-full overflow-x-auto whitespace-nowrap">{expense.title}</div>
-                )}
-              </td>
-              <td className="border-2 text-center ">
-                {isEditable ? (
-                  <div className="block max-w-full overflow-x-auto">
-                    <input
-                      type="text"
-                      className="border p-1 rounded-md w-full"
-                      placeholder="Description"
-                      value={description}
-                      onChange={(e) => {
-                        setDescription(e.target.value);
-                      }}
-                      onClick={() => setError('')}
-                    />
+                </td>
+                <td className="border-2 text-center">
+                  <div className="block max-w-full overflow-x-auto whitespace-nowrap">
+                    {isRowEditable ? (
+                      <input
+                        type="number"
+                        className="border p-1 rounded-md w-full"
+                        placeholder="Amount"
+                        value={editedAmount}
+                        onChange={(e) => {
+                          setEditedAmount(e.target.value);
+                        }}
+                        onClick={() => setError('')}
+                      />
+                    ) : (
+                      expense.amount
+                    )}
                   </div>
-                ) : (
-                  <div className="block max-w-full overflow-x-auto whitespace-nowrap">{expense.description}</div>
-                )}
-              </td>
-              <td className="border-2">
-                <div className="flex items-center justify-center gap-1">
-                  {isEditable && <button className="border px-2 py-0.5 bg-blue-300 cursor-pointer">Save</button>}
-                  <button className="border px-2 py-0.5 m-1 bg-blue-300" onClick={() => handleEditExpense()}>
-                    Edit expense
-                  </button>
-                  <button className="border px-2 py-0.5 bg-red-300" onClick={() => handleDeleteExpense()}>
-                    Delete expense
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className="border-2 px-2">
+                  {isRowEditable ? (
+                    <div className="block max-w-full overflow-x-auto">
+                      <input
+                        type="text"
+                        className="border p-1 rounded-md w-full"
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="block max-w-full overflow-x-auto whitespace-nowrap">{expense.title}</div>
+                  )}
+                </td>
+                <td className="border-2 text-center ">
+                  {isRowEditable ? (
+                    <div className="block max-w-full overflow-x-auto">
+                      <input
+                        type="text"
+                        className="border p-1 rounded-md w-full"
+                        placeholder="Description"
+                        value={editedDescription}
+                        onChange={(e) => {
+                          setEditedDescription(e.target.value);
+                        }}
+                        onClick={() => setError('')}
+                      />
+                    </div>
+                  ) : (
+                    <div className="block max-w-full overflow-x-auto whitespace-nowrap">{expense.description}</div>
+                  )}
+                </td>
+                <td className="border-2">
+                  <div className="flex items-center justify-center gap-1">
+                    {isRowEditable && (
+                      <>
+                        <button
+                          className="border px-2 py-0.5 bg-blue-300 cursor-pointer"
+                          onClick={() => {
+                            setError('');
+                            setEditExpense({
+                              _id: expense._id,
+                              date: editedDate,
+                              amount: editedAmount,
+                              title: editedTitle,
+                              description: editedDescription,
+                            });
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="border px-2 py-0.5 bg-red-400 cursor-pointer"
+                          onClick={() => setEditingId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                    <button
+                      className="border px-2 py-0.5 m-1 bg-blue-300  cursor-pointer"
+                      onClick={() => handleEditExpense(expense)}
+                    >
+                      Edit expense
+                    </button>
+                    <button
+                      className="border px-2 py-0.5 bg-red-300  cursor-pointer"
+                      onClick={() => handleDeleteExpense(expense)}
+                    >
+                      Delete expense
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+      {isPopupOpened && <Popup setIsPopupOpened={setIsPopupOpened} setIsDeleteExpense={setIsDeleteExpense} />}
     </div>
   );
 };
