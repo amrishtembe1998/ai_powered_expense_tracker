@@ -11,19 +11,19 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const userRouter = express.Router();
 
 userRouter.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   const { success } = signupSchema.safeParse(req.body);
   if (!success) {
     return res.status(401).json({ message: 'Invalid inputs' });
   }
-  const existingUser = await User.findOne({ username });
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
-    return res.status(409).json({ message: `User already exist with username ${username}` });
+    return res.status(409).json({ message: `User already exist with email ${email}` });
   }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const dbResponse = await User.create({ username, password: hashedPassword });
-    const signedJWT = jwt.sign({ id: dbResponse._id, username }, JWT_SECRET);
+    const dbResponse = await User.create({ email, password: hashedPassword });
+    const signedJWT = jwt.sign({ id: dbResponse._id, email }, JWT_SECRET);
     res.json({ jwt: signedJWT });
   } catch (error) {
     console.error('Error during user signup:', error);
@@ -33,20 +33,20 @@ userRouter.post('/signup', async (req, res) => {
 
 userRouter.post('/signin', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     const { success } = signinSchema.safeParse(req.body);
     if (!success) {
       return res.status(401).json({ message: 'Invalid inputs' });
     }
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
-    const signedJWT = jwt.sign({ id: user._id, username }, JWT_SECRET);
+    const signedJWT = jwt.sign({ id: user._id, email }, JWT_SECRET);
     res.json({ jwt: signedJWT });
   } catch (error) {
     console.error('Error during user signin:', error);

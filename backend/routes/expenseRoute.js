@@ -34,8 +34,6 @@ expenseRouter.get('/getExpenses', authMiddleware, async (req, res) => {
 expenseRouter.patch('/patchExpense/:expenseId', authMiddleware, async (req, res) => {
   const { expenseId } = req.params;
   const { data } = req.body;
-  console.log('req.params.expenseId: ', req.params.expenseId);
-  console.log('req.body: ', data);
   if (!expenseId || !data) {
     return res.status(400).json({ message: 'Invalid Inputs' });
   }
@@ -44,12 +42,10 @@ expenseRouter.patch('/patchExpense/:expenseId', authMiddleware, async (req, res)
   }
   try {
     const result = await Expense.find({ _id: expenseId });
-    console.log('Result: ', result);
     if (result.length === 0) {
       return res.status(400).json({ message: 'Invalid Expense ID provided' });
     }
     const response = await Expense.findByIdAndUpdate(expenseId, { $set: data }, { new: true, runValidators: true });
-    console.log('Response: ', response);
     return res.status(200).json(response);
   } catch (error) {
     console.error('Error during updating expenses:', error);
@@ -59,13 +55,11 @@ expenseRouter.patch('/patchExpense/:expenseId', authMiddleware, async (req, res)
 
 expenseRouter.delete('/deleteExpense/:expenseId', authMiddleware, async (req, res) => {
   const { expenseId } = req.params;
-  console.log('ExpenseId: ', expenseId);
   if (!expenseId) {
     return res.status(400).json({ message: 'Invalid Inputs' });
   }
   try {
     const result = await Expense.deleteOne({_id: expenseId});
-    console.log(result);
     if (!result) {
       return res.status(500).json({ message: 'Something went wrong in DB operation' });
     }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Popup from './Popup';
+import { Button, Input, Stack } from '@mui/material';
 
 const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteExpenseId, error, setError }) => {
   const today = new Date().toISOString().split('T')[0];
@@ -21,7 +22,6 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
 
   const handleDeleteExpense = (expense) => {
     setIsPopupOpened(true);
-    console.log('expense._id', expense._id);
     setDeleteExpenseId(expense._id);
   };
 
@@ -58,8 +58,8 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
                 <td className="border-2 text-center">
                   <div className="block max-w-full overflow-x-auto whitespace-nowrap">
                     {isRowEditable ? (
-                      <input
-                        className="w-full"
+                      <Input
+                        className="w-full bg-white"
                         type="date"
                         value={editedDate}
                         onChange={(e) => {
@@ -75,9 +75,9 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
                 <td className="border-2 text-center">
                   <div className="block max-w-full overflow-x-auto whitespace-nowrap">
                     {isRowEditable ? (
-                      <input
+                      <Input
                         type="number"
-                        className="border p-1 rounded-md w-full"
+                        className="border p-1 rounded-md w-full bg-white"
                         placeholder="Amount"
                         value={editedAmount}
                         onChange={(e) => {
@@ -93,9 +93,9 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
                 <td className="border-2 px-2">
                   {isRowEditable ? (
                     <div className="block max-w-full overflow-x-auto">
-                      <input
+                      <Input
                         type="text"
-                        className="border p-1 rounded-md w-full"
+                        className="border p-1 rounded-md w-full bg-white"
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
                       />
@@ -107,9 +107,9 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
                 <td className="border-2 text-center ">
                   {isRowEditable ? (
                     <div className="block max-w-full overflow-x-auto">
-                      <input
+                      <Input
                         type="text"
-                        className="border p-1 rounded-md w-full"
+                        className="border p-1 rounded-md w-full bg-white"
                         placeholder="Description"
                         value={editedDescription}
                         onChange={(e) => {
@@ -126,7 +126,9 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
                   <div className="flex items-center justify-center gap-1">
                     {isRowEditable && (
                       <>
-                        <button
+                        <Button
+                          variant="contained"
+                          color="success"
                           className="border px-2 py-0.5 bg-blue-300 cursor-pointer"
                           onClick={() => {
                             setError('');
@@ -140,27 +142,27 @@ const ExpensesList = ({ expenses, setEditExpense, setIsDeleteExpense, setDeleteE
                           }}
                         >
                           Save
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="warning"
                           className="border px-2 py-0.5 bg-red-400 cursor-pointer"
                           onClick={() => setEditingId(null)}
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </>
                     )}
-                    <button
-                      className="border px-2 py-0.5 m-1 bg-blue-300  cursor-pointer"
-                      onClick={() => handleEditExpense(expense)}
-                    >
-                      Edit expense
-                    </button>
-                    <button
-                      className="border px-2 py-0.5 bg-red-300  cursor-pointer"
-                      onClick={() => handleDeleteExpense(expense)}
-                    >
-                      Delete expense
-                    </button>
+                    <Stack spacing={2} direction="row" className="py-3">
+                      <Button variant="contained" onClick={() => handleEditExpense(expense)}>
+                        Edit expense
+                      </Button>
+                      {!isRowEditable && (
+                        <Button variant="contained" color="warning" onClick={() => handleDeleteExpense(expense)}>
+                          Delete expense
+                        </Button>
+                      )}
+                    </Stack>
                   </div>
                 </td>
               </tr>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Button, Input } from '@mui/material';
 import ExpensesList from './ExpensesList';
 import { fetchExpenses, patchExpense, deleteExpenses, addExpense } from '../utilities';
 
@@ -72,7 +73,6 @@ const Home = () => {
 
     try {
       const { status } = await addExpense(date, amount, title, description);
-      console.log('Result: ', status);
       if (status !== 201) {
         throw new Error('Error while creating an expense');
       }
@@ -98,11 +98,12 @@ const Home = () => {
           }}
         >
           <div className="flex justify-center m-8">
-            <div className="flex items-center">
+            <div className="flex items-center mx-4">
               <div>Pick a Date:</div>
-              <input
+              <Input
+                color='secondary'
                 type="date"
-                className="border p-1 mx-1 rounded-md"
+                className="border p-1 mx-1 rounded-md bg-white"
                 value={date}
                 onChange={(e) => {
                   setDate(e.target.value);
@@ -110,11 +111,11 @@ const Home = () => {
                 onClick={() => setError('')}
               />
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center mx-4">
               <div>Amount: </div>
-              <input
+              <Input
                 type="number"
-                className="border p-1 mx-1 rounded-md"
+                className="border px-2 py-1 mx-1 rounded-md bg-white"
                 placeholder="Amount"
                 value={amount}
                 onChange={(e) => {
@@ -123,11 +124,11 @@ const Home = () => {
                 onClick={() => setError('')}
               />
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center mx-4">
               <div>Title: </div>
-              <input
+              <Input
                 type="text"
-                className="border p-1 mx-1 rounded-md"
+                className="border px-2 mx-1 py-1 rounded-md bg-white"
                 placeholder="Title"
                 value={title}
                 onChange={(e) => {
@@ -136,11 +137,11 @@ const Home = () => {
                 onClick={() => setError('')}
               />
             </div>
-            <div className="flex items-center mx-2">
+            <div className="flex items-center mx-4">
               <div>Description: </div>
-              <input
+              <Input
                 type="text"
-                className="border mx-1 rounded-md"
+                className="border p-1 mx-1 px-2 rounded-md bg-white"
                 placeholder="Description"
                 value={description}
                 onChange={(e) => {
@@ -151,16 +152,17 @@ const Home = () => {
             </div>
           </div>
           <div className="flex justify-center items-center">
-            <button
+            <Button
               type="submit"
+              variant='contained'
               className="p-2 border-2 rounded-lg bg-blue-50 text-blue-900 border-blue-900 cursor-pointer hover:bg-blue-300"
               onClick={onAddExpenseClickHandler}
             >
               Add Expense
-            </button>
+            </Button>
           </div>
         </form>
-        {error && <h3 className="text-red-800 flex justify-center items-center. mt-2">{error}</h3>}
+        {error && <h3 className="text-red-300 flex justify-center items-center. mt-2">{error}</h3>}
         {expenses.length === 0 ? (
           <h1 className="flex justify-center h-screen mt-8 text-4xl">Add Expenses to get started</h1>
         ) : (

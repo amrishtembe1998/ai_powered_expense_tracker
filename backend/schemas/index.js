@@ -1,14 +1,14 @@
 import zod from 'zod';
 
 export const signupSchema = zod.object({
-  username: zod.string().min(4),
+  email: zod.email(),
   password: zod.string().min(8),
   firstName: zod.string().min(4),
   lastName: zod.string().min(4),
 });
 
 export const signinSchema = zod.object({
-  username: zod.string().min(4),
+  email: zod.email(),
   password: zod.string().min(8),
 });
 
