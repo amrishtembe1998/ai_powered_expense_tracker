@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import rateLimiter from 'express-rate-limit';
+import cron from 'node-cron';
 import connectMongodbWithRetry from './db.js';
 import { userRouter } from './routes/userRoute.js';
 import { expenseRouter } from './routes/expenseRoute.js';
@@ -29,6 +30,10 @@ connectMongodbWithRetry()
     console.error('Failed to connect to DB. Exiting.', err);
     process.exit(1);
   });
+
+cron.schedule('* * * * *', () => {
+  console.log('Cron triggered');
+});
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
