@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { MAX_DB_RETRY } from '../frontend/src/constants.js';
+import { MAX_DB_RETRY } from './constants.js';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

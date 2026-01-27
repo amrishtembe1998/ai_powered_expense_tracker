@@ -7,13 +7,14 @@ import { Expense } from '../db.js';
 export const expenseRouter = express.Router();
 
 expenseRouter.post('/addExpense', authMiddleware, async (req, res) => {
+  const { uid } = req.user; // safe, verified uid
   const { amount, title, description, date } = req.body;
   const { success } = addExpenseSchema.safeParse(req.body);
   if (!success) {
     return res.status(400).json({ message: 'Invalid Input' });
   }
   try {
-    const expense = await Expense.create({ user: req.userId, amount: Number(amount), title, description, date });
+    const expense = await Expense.create({ user: uid, amount: Number(amount), title, description, date });
     res.status(201).json({ message: 'Expense created', expense });
   } catch (error) {
     console.error('Error during expense creation:', error);
@@ -22,8 +23,9 @@ expenseRouter.post('/addExpense', authMiddleware, async (req, res) => {
 });
 
 expenseRouter.get('/getExpenses', authMiddleware, async (req, res) => {
+  const { uid } = req.user; // safe, verified uid
   try {
-    const data = await Expense.find({ user: req.userId });
+    const data = await Expense.find({ user: uid });
     res.json(data);
   } catch (error) {
     console.error('Error during fetching expenses:', error);
@@ -59,7 +61,7 @@ expenseRouter.delete('/deleteExpense/:expenseId', authMiddleware, async (req, re
     return res.status(400).json({ message: 'Invalid Inputs' });
   }
   try {
-    const result = await Expense.deleteOne({_id: expenseId});
+    const result = await Expense.deleteOne({ _id: expenseId });
     if (!result) {
       return res.status(500).json({ message: 'Something went wrong in DB operation' });
     }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -7,7 +6,7 @@ import {
 } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { Button, Link, Input } from "@mui/material";
-import { BACKEND_DOMAIN, USER_AVATAR_URL } from "../constants";
+import { USER_AVATAR_URL } from "../constants";
 import { auth } from "../utilities/firebase";
 import { validateForm } from "../utilities/validator";
 import AuthHero from "./AuthHero";
@@ -21,10 +20,6 @@ export default function Login() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        localStorage.removeItem("token");
-    }, []);
-
     const onAuthClickHandler = async (e) => {
         e.preventDefault();
         const message = validateForm(email, password);
@@ -34,23 +29,15 @@ export default function Login() {
             setIsLoading(true);
             //Sign Up logic
             createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
+                .then(async (userCredential) => {
                     const user = userCredential.user;
                     console.log("User from Sign up: ", user);
-                    updateProfile(user, {
+                    await updateProfile(user, {
                         displayName: name,
                         photoURL: USER_AVATAR_URL,
                     })
-                        .then(() => {
-                            const { uid, displayName, email, photoURL } =
-                                auth.currentUser;
-                            console.log(uid, displayName, email, photoURL);
-                            setIsLoading(false);
-                            navigate("/home");
-                        })
-                        .catch((error) => {
-                            setError(error.message);
-                        });
+                    setIsLoading(false);
+                    navigate("/home");
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -61,6 +48,7 @@ export default function Login() {
             //Sign In Logic
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
+                    localStorage.setItem('uid', auth.currentUser.uid);
                     const user = userCredential.user;
                     console.log("User from Sign in: ", user);
                     navigate("/home");
@@ -75,55 +63,6 @@ export default function Login() {
                     }
                 });
         }
-        // if (email && password) {
-        //     if (isLogin) {
-        //         try {
-        //             setIsLoading(true);
-        //             const response = await axios.post(
-        //                 `${BACKEND_DOMAIN}/api/v1/user/signin`,
-        //                 {
-        //                     email,
-        //                     password,
-        //                 },
-        //             );
-        //             setIsLoading(false);
-        //             localStorage.setItem("token", response.data.jwt);
-        //             navigate("/home");
-        //         } catch (error) {
-        //             setIsLoading(false);
-        //             setError(
-        //                 error?.response?.data?.message ||
-        //                     "Something went wrong. Please try again.",
-        //             );
-        //         }
-        //     } else {
-        //         try {
-        //             setIsLoading(true);
-        //             const response = await axios.post(
-        //                 `${BACKEND_DOMAIN}/api/v1/user/signup`,
-        //                 {
-        //                     email,
-        //                     password,
-        //                     firstName,
-        //                     lastName,
-        //                 },
-        //             );
-        //             setIsLoading(false);
-        //             localStorage.setItem("token", response.data.jwt);
-        //             navigate("/home");
-        //         } catch (error) {
-        //             setIsLoading(false);
-        //             setError(
-        //                 error?.response?.data?.message ||
-        //                     "Something went wrong. Please try again.",
-        //             );
-        //         }
-        //     }
-        // } else {
-        //     isLogin
-        //         ? setError("Please enter email and Password")
-        //         : setError("Please enter all the details to continue");
-        // }
     };
 
     return (
@@ -143,16 +82,16 @@ export default function Login() {
                         {!isLogin && (
                             <>
                                 <div className="flex px-3 pb-3">
-                                    <div className="p-1 whitespace-nowrap">
+                                    <div className="p-1 whitespace-nowrap pr-10">
                                         Name
                                     </div>
                                     <Input
                                         className="block w-full rounded-md bg-gray-200 pl-1 pr-4"
                                         type="text"
-                                        placeholder="John"
+                                        placeholder="John Doe"
                                         value={name}
                                         onChange={(e) => {
-                                            setName(e.target.value.trim());
+                                            setName(e.target.value);
                                         }}
                                     />
                                 </div>
@@ -163,7 +102,7 @@ export default function Login() {
                             <Input
                                 className="block w-full rounded-md bg-gray-200 pl-1 pr-4"
                                 type="text"
-                                placeholder="user@name.com"
+                                placeholder="abc@xyz.com"
                                 value={email}
                                 onChange={(e) => {
                                     setEmail(e.target.value.trim());
