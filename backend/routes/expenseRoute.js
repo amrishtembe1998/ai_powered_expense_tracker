@@ -10,11 +10,13 @@ expenseRouter.post('/addExpense', authMiddleware, async (req, res) => {
   const { uid } = req.user; // safe, verified uid
   const { amount, title, description, date } = req.body;
   const { success } = addExpenseSchema.safeParse(req.body);
+  console.log("Success: ", success);
+  console.log("UID from addExpense: ", uid);
   if (!success) {
     return res.status(400).json({ message: 'Invalid Input' });
   }
   try {
-    const expense = await Expense.create({ user: uid, amount: Number(amount), title, description, date });
+    const expense = await Expense.create({ userId: uid, amount: Number(amount), title, description, date });
     res.status(201).json({ message: 'Expense created', expense });
   } catch (error) {
     console.error('Error during expense creation:', error);
@@ -25,7 +27,8 @@ expenseRouter.post('/addExpense', authMiddleware, async (req, res) => {
 expenseRouter.get('/getExpenses', authMiddleware, async (req, res) => {
   const { uid } = req.user; // safe, verified uid
   try {
-    const data = await Expense.find({ user: uid });
+    console.log("UID: ", uid);
+    const data = await Expense.find({ userId: uid });
     res.json(data);
   } catch (error) {
     console.error('Error during fetching expenses:', error);

@@ -25,13 +25,14 @@ export default async function connectMongodbWithRetry() {
 }
 const userSchema = mongoose.Schema({
   firstName: String,
+  userId: String,
   lastName: String,
   email: { type: String, unique: true },
   password: String,
 });
 
 const expenseSchema = mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // reference to User
+  userId: { type: String, required: true },
   amount: { type: Number, required: true },
   title: { type: String, required: true },
   description: { type: String, required: false },
