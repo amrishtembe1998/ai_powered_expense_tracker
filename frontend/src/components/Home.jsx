@@ -7,9 +7,13 @@ import {
     deleteExpenses,
     addExpense,
 } from "../utilities";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Home = () => {
+    const auth = getAuth();
     const today = new Date().toISOString().split("T")[0];
+    const [authReady, setAuthReady] = useState(false);
+    const [user, setUser] = useState(null);
     const [date, setDate] = useState(today);
     const [amount, setAmount] = useState(0);
     const [title, setTitle] = useState("");
@@ -21,6 +25,15 @@ const Home = () => {
     const [editExpense, setEditExpense] = useState({});
     const [isDeleteExpense, setIsDeleteExpense] = useState(false);
     const [deleteExpenseId, setDeleteExpenseId] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            setAuthReady(true);
+        });
+
+        return unsubscribe; // ✅ cleanup
+    }, []);
 
     useEffect(() => {
         async function updateExpense(editExpense) {
@@ -38,14 +51,20 @@ const Home = () => {
     }, [editExpense]);
 
     useEffect(() => {
+        if (!authReady || !user) return;
+
         async function getExpenseData() {
             setIsLoading(true);
-            const data = await fetchExpenses();
-            setExpenses(data);
-            setIsLoading(false);
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const data = await fetchExpenses();
+                    setExpenses(data);
+                    setIsLoading(false);
+                }
+            });
         }
         getExpenseData();
-    }, [addExpenseTrigger]);
+    }, [addExpenseTrigger, user, authReady]);
 
     useEffect(() => {
         async function performDelete() {
