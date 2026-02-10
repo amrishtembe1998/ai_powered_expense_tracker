@@ -20,3 +20,5 @@ If you are developing a production application, we recommend using TypeScript wi
 1. Add VITE_FIREBASE_API_KEY in .env file with actual api key from firebase console.
 
 ## Access live application connecting to localhost backend:
+
+https://ai-powered-expense-track-91958.web.app/
