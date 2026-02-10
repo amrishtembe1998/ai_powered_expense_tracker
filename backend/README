@@ -1,0 +1,24 @@
+To use Firebase Admin SDK securely, the downloaded service account key JSON file must be converted into a Base64 string and stored in the .env file as SERVICE_ACCOUNT_JSON_BASE64.
+
+✅ Steps (Windows / PowerShell)
+
+Open PowerShell in the directory where your Firebase service account JSON file exists.
+
+Run the following command:
+
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("<file_name>.json"))
+
+Replace <file_name>.json with the actual name of the downloaded Firebase service account file
+(for example: serviceAccountKeys.json).
+
+Copy the generated Base64 string and add it to your .env file:
+
+SERVICE_ACCOUNT_JSON_BASE64=PASTE_BASE64_STRING_HERE
+
+⚠️ Important Notes
+
+Ensure the Base64 string is a single line (no line breaks).
+
+Do not wrap the value in quotes.
+
+Never commit the service account file or .env file to version control.
